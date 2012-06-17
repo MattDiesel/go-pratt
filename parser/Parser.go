@@ -5,8 +5,8 @@ import (
 )
 
 type Parser struct { // implements: IParser
-	token IToken
-	Lexer <-chan IToken
+	token   IToken
+	Lexer   <-chan IToken
 	Symbols map[string]IToken
 }
 
@@ -30,7 +30,7 @@ func (this *Parser) Parse(lex <-chan IToken) (IValue, error) {
 func (this *Parser) expression(rbp Precedence) (IValue, error) {
 	t := this.token
 
-	if err := this.Step( nil ); err != nil {
+	if err := this.Step(nil); err != nil {
 		return nil, err
 	}
 
@@ -38,7 +38,7 @@ func (this *Parser) expression(rbp Precedence) (IValue, error) {
 	var err error
 
 	// Handle first token of expression.
-	if left,err = t.Nud(); err != nil {
+	if left, err = t.Nud(); err != nil {
 		return nil, err
 	}
 
@@ -46,11 +46,11 @@ func (this *Parser) expression(rbp Precedence) (IValue, error) {
 	for rbp <= this.token.Lbp() {
 		t = this.token
 
-		if err = this.Step( nil ); err != nil {
+		if err = this.Step(nil); err != nil {
 			return nil, err
 		}
 
-		if left,err = t.Led(left); err != nil {
+		if left, err = t.Led(left); err != nil {
 			return nil, err
 		}
 	}

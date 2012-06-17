@@ -1,7 +1,6 @@
 package parser
 
-import (
-)
+import ()
 
 type IParser interface {
 	Parse(<-chan IToken) (IValue, error)

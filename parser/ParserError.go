@@ -1,4 +1,3 @@
-
 package parser
 
 import (
@@ -7,16 +6,16 @@ import (
 
 type Position struct { // implements: IValue
 	line int
-	col int
+	col  int
 }
-	func (this *Position) ToString() string {
-		return fmt.Sprintf("%i:%i", this.line, this.col)
-	}
 
+func (this *Position) ToString() string {
+	return fmt.Sprintf("%i:%i", this.line, this.col)
+}
 
 type ParserError struct { // implements: error
-	Pos* Position
-	Msg string
+	Pos  *Position
+	Msg  string
 	Name string
 
 	// NewParserError(string, string, Position) ParserError
