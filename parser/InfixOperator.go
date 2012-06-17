@@ -8,15 +8,15 @@ type InfixOperator struct { // implements: IToken
 	function LedHandler
 	parent IParser
 }
-	func (this InfixOperator) Name() string {
+	func (this *InfixOperator) Name() string {
 		return this.name
 	}
 
-	func (this InfixOperator) Lbp() Precedence {
+	func (this *InfixOperator) Lbp() Precedence {
 		return this.lbp
 	}
 
-	func (this InfixOperator) Led(left IValue) (IValue, error) {
+	func (this *InfixOperator) Led(left IValue) (IValue, error) {
 		right, err := this.parent.expression( this.lbp )
 
 		if err != nil {
@@ -26,18 +26,18 @@ type InfixOperator struct { // implements: IToken
 		return this.function(left, right)
 	}
 
-	func (this InfixOperator) Nud() (IValue, error) {
+	func (this *InfixOperator) Nud() (IValue, error) {
 		return nil, NewParserError("Infix operator cannot appear prefix")
 	}
 
-	func (this InfixOperator) SetParser(p IParser) {
+	func (this *InfixOperator) SetParser(p IParser) {
 		this.parent = p
 	}
 
-	func (this InfixOperator) GetParser() IParser {
+	func (this *InfixOperator) GetParser() IParser {
 		return this.parent
 	}
 
-	func NewInfixOperator(n string, bp Precedence, f LedHandler) InfixOperator {
-		return InfixOperator{n, bp, f, nil}
+	func NewInfixOperator(n string, bp Precedence, f LedHandler) *InfixOperator {
+		return &InfixOperator{n, bp, f, nil}
 	}

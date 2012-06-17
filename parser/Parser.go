@@ -10,13 +10,14 @@ type Parser struct { // implements: IParser
 	Symbols map[string]IToken
 }
 
-func NewParser() (ret Parser) {
+func NewParser() *Parser {
+	ret := new(Parser)
 	ret.token = NewToken("(error)", 0)
 	ret.Symbols = make(map[string]IToken)
 	return ret
 }
 
-func (this Parser) Parse(lex <-chan IToken) (IValue, error) {
+func (this *Parser) Parse(lex <-chan IToken) (IValue, error) {
 	this.Lexer = lex
 
 	if err := this.Step(nil); err != nil {
@@ -26,7 +27,7 @@ func (this Parser) Parse(lex <-chan IToken) (IValue, error) {
 	return this.expression(0)
 }
 
-func (this Parser) expression(rbp Precedence) (IValue, error) {
+func (this *Parser) expression(rbp Precedence) (IValue, error) {
 	t := this.token
 
 	if err := this.Step( nil ); err != nil {
@@ -57,7 +58,7 @@ func (this Parser) expression(rbp Precedence) (IValue, error) {
 	return left, nil
 }
 
-func (this Parser) Add(t IToken) error {
+func (this *Parser) Add(t IToken) error {
 	// TODO: Check if name already exists.
 
 	t.SetParser(this)
@@ -66,7 +67,7 @@ func (this Parser) Add(t IToken) error {
 	return nil
 }
 
-func (this Parser) Step(t IToken) error {
+func (this *Parser) Step(t IToken) error {
 	if t != nil {
 		if this.token.Name() != t.Name() {
 			return NewParserError(
@@ -85,6 +86,6 @@ func (this Parser) Step(t IToken) error {
 	return nil
 }
 
-func (this Parser) GetSymbol(n string) IToken {
+func (this *Parser) GetSymbol(n string) IToken {
 	return this.Symbols[n]
 }

@@ -9,7 +9,7 @@ type Position struct { // implements: IValue
 	line int
 	col int
 }
-	func (this Position) ToString() string {
+	func (this *Position) ToString() string {
 		return fmt.Sprintf("%i:%i", this.line, this.col)
 	}
 
@@ -23,11 +23,11 @@ type ParserError struct { // implements: error
 	// Error() string
 }
 
-func NewParserError(msg string) ParserError {
-	return ParserError{nil, msg, "ParserError"}
+func NewParserError(msg string) *ParserError {
+	return &ParserError{nil, msg, "ParserError"}
 }
 
-func (this ParserError) Error() string {
+func (this *ParserError) Error() string {
 	if this.Pos == nil {
 		return fmt.Sprintf("%s: %s", this.Name, this.Msg)
 	}

@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"strconv"
 	"./parser"
 )
 
@@ -9,12 +10,12 @@ type Integer struct { // implements parser.IValue
 	value int
 }
 
-	func (this Integer) ToString() string {
+	func (this *Integer) ToString() string {
 		return fmt.Sprint(this.value)
 	}
 
-	func NewInteger(i int) (Integer) {
-		return Integer{i}
+	func NewInteger(i int) *Integer {
+		return &Integer{i}
 	}
 
 
@@ -33,7 +34,8 @@ func NewLexer(p parser.IParser, ch chan<- parser.IToken, input string) {
 		} else if c == '-'  {
 			ch <- p.GetSymbol("-")
 		} else {
-			ch <- parser.NewLiteral(NewInteger(42))
+			i, _ := strconv.Atoi(fmt.Sprint(c))
+			ch <- parser.NewLiteral(NewInteger(i - 48))
 		}
 	}
 	ch<- p.GetSymbol("(end)")
@@ -47,15 +49,15 @@ func main() {
 	p := parser.NewParser()
 
 	add := parser.NewInfixOperator("+", 10, func(a, b parser.IValue) (parser.IValue, error) {
-		ai, _ := a.(Integer)
-		bi, _ := b.(Integer)
+		ai, _ := a.(*Integer)
+		bi, _ := b.(*Integer)
 
 		return NewInteger(ai.value+bi.value), nil
 	})
 
 	sub := parser.NewInfixOperator("-", 10, func(a, b parser.IValue) (parser.IValue, error) {
-		ai, _ := a.(Integer)
-		bi, _ := b.(Integer)
+		ai, _ := a.(*Integer)
+		bi, _ := b.(*Integer)
 
 		return NewInteger(ai.value-bi.value), nil
 	})
