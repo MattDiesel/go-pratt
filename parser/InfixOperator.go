@@ -3,42 +3,40 @@ package parser
 type LedHandler func(a, b IValue) (IValue, error)
 
 type InfixOperator struct { // implements: IToken
-	name     string
-	lbp      Precedence
-	function LedHandler
-	parent   IParser
+	Symbol   string
+	Bp       Precedence
+	Function LedHandler
+	Parent   IParser
 }
 
 func (this *InfixOperator) Name() string {
-	return this.name
+	return this.Symbol
 }
 
 func (this *InfixOperator) Lbp() Precedence {
-	return this.lbp
+	return this.Bp
 }
 
 func (this *InfixOperator) Led(left IValue) (IValue, error) {
-	right, err := this.parent.expression(this.lbp)
+	right, err := this.Parent.expression(this.Bp)
 
 	if err != nil {
 		return nil, err
 	}
 
-	return this.function(left, right)
+	return this.Function(left, right)
 }
 
 func (this *InfixOperator) Nud() (IValue, error) {
-	return nil, NewParserError("Infix operator cannot appear prefix")
+	return nil, &ParserError{
+		this.Parent.Lexer().Here(),
+		"Infix operator cannot appear prefix"}
 }
 
 func (this *InfixOperator) SetParser(p IParser) {
-	this.parent = p
+	this.Parent = p
 }
 
 func (this *InfixOperator) GetParser() IParser {
-	return this.parent
-}
-
-func NewInfixOperator(n string, bp Precedence, f LedHandler) *InfixOperator {
-	return &InfixOperator{n, bp, f, nil}
+	return this.Parent
 }

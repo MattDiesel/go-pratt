@@ -1,5 +1,9 @@
 package parser
 
+import (
+	"fmt"
+)
+
 type Literal struct { // implements: IToken
 	value  IValue
 	parent IParser
@@ -14,7 +18,9 @@ func (this *Literal) Lbp() Precedence {
 }
 
 func (this *Literal) Led(left IValue) (IValue, error) {
-	return nil, NewParserError("Literal expression cannot appear infix.")
+	return nil, &ParserError{
+		this.parent.Lexer().Here(),
+		fmt.Sprintf("Literal expression '%v' cannot appear infix.", this.value)}
 }
 
 func (this *Literal) Nud() (IValue, error) {

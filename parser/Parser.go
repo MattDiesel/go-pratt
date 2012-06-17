@@ -6,19 +6,23 @@ import (
 
 type Parser struct { // implements: IParser
 	token   IToken
-	Lexer   <-chan IToken
+	lexer   ILexer
 	Symbols map[string]IToken
 }
 
 func NewParser() *Parser {
 	ret := new(Parser)
-	ret.token = NewToken("(error)", 0)
+	ret.token = &Token{"(error)", 0, nil}
 	ret.Symbols = make(map[string]IToken)
 	return ret
 }
 
-func (this *Parser) Parse(lex <-chan IToken) (IValue, error) {
-	this.Lexer = lex
+func (this *Parser) Lexer() ILexer {
+	return this.lexer
+}
+
+func (this *Parser) Parse(lex ILexer) (IValue, error) {
+	this.lexer = lex
 
 	if err := this.Step(nil); err != nil {
 		return nil, err
@@ -70,15 +74,16 @@ func (this *Parser) Add(t IToken) error {
 func (this *Parser) Step(t IToken) error {
 	if t != nil {
 		if this.token.Name() != t.Name() {
-			return NewParserError(
-				fmt.Sprintf("Expected token type %s, got %s.", t.Name(), this.token.Name()))
+			return &ParserError{
+				this.Lexer().Here(),
+				fmt.Sprintf("Expected token type %s, got %s.", t.Name(), this.token.Name())}
 		}
 	}
 
-	t, ok := <-this.Lexer
+	t, err := this.Lexer().Read()
 
-	if !ok {
-		this.token = this.Symbols["(end)"]
+	if err != nil {
+		return err
 	} else {
 		this.token = t
 	}

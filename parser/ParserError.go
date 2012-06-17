@@ -5,33 +5,32 @@ import (
 )
 
 type Position struct { // implements: IValue
-	line int
-	col  int
+	Line int
+	Col  int
 }
 
 func (this *Position) ToString() string {
-	return fmt.Sprintf("%i:%i", this.line, this.col)
+	return fmt.Sprintf("%v:%v", this.Line, this.Col)
 }
 
 type ParserError struct { // implements: error
-	Pos  *Position
-	Msg  string
-	Name string
+	Pos *Position
+	Msg string
 
 	// NewParserError(string, string, Position) ParserError
 	// Error() string
 }
 
 func NewParserError(msg string) *ParserError {
-	return &ParserError{nil, msg, "ParserError"}
+	return &ParserError{nil, msg}
 }
 
 func (this *ParserError) Error() string {
 	if this.Pos == nil {
-		return fmt.Sprintf("%s: %s", this.Name, this.Msg)
+		return fmt.Sprintf("ParserError: %v", this.Msg)
 	}
 
 	return fmt.Sprintf(
-		"%s: %s\n\t%s",
-		this.Pos.ToString(), this.Name, this.Msg)
+		"%v: ParserError\n\t%v",
+		this.Pos.ToString(), this.Msg)
 }
