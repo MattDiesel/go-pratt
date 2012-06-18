@@ -28,10 +28,10 @@ func (this *Parser) Parse(lex ILexer) (IValue, error) {
 		return nil, err
 	}
 
-	return this.expression(0)
+	return this.Expression(0)
 }
 
-func (this *Parser) expression(rbp Precedence) (IValue, error) {
+func (this *Parser) Expression(rbp Precedence) (IValue, error) {
 	t := this.token
 
 	if err := this.Step(nil); err != nil {

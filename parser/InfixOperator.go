@@ -1,11 +1,15 @@
 package parser
 
-type LedHandler func(a, b IValue) (IValue, error)
+import (
+	"fmt"
+)
+
+type InfixOp func(a, b IValue) (IValue, error)
 
 type InfixOperator struct { // implements: IToken
 	Symbol   string
 	Bp       Precedence
-	Function LedHandler
+	Function InfixOp
 	Parent   IParser
 }
 
@@ -18,7 +22,7 @@ func (this *InfixOperator) Lbp() Precedence {
 }
 
 func (this *InfixOperator) Led(left IValue) (IValue, error) {
-	right, err := this.Parent.expression(this.Bp)
+	right, err := this.Parent.Expression(this.Bp)
 
 	if err != nil {
 		return nil, err
@@ -30,7 +34,7 @@ func (this *InfixOperator) Led(left IValue) (IValue, error) {
 func (this *InfixOperator) Nud() (IValue, error) {
 	return nil, &ParserError{
 		this.Parent.Lexer().Here(),
-		"Infix operator cannot appear prefix"}
+		fmt.Sprint("Infix operator '%v' cannot appear prefix.", this.Name())}
 }
 
 func (this *InfixOperator) SetParser(p IParser) {
